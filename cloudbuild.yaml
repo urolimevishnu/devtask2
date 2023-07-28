@@ -30,3 +30,6 @@ steps:
       - '--namespace=wordpress'  # Replace with your target namespace
 
 timeout: '1800s'  # Set a timeout that fits your deployment's duration
+
+options:
+  logging: CLOUD_LOGGING_ONLY 
