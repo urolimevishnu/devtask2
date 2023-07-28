@@ -12,14 +12,17 @@ steps:
     args:
       - 'clone'
       - 'https://github.com/urolimevishnu/devtask2.git'
-      - 'cicd'  # Directory where your Helm chart files are located
+      - 'src'  # Directory where your Helm chart files are located
   - name: 'gcr.io/cloud-builders/helm'
     args:
       - 'upgrade'
       - '--install'
       - 'YOUR_HELM_RELEASE_NAME1'
-      - 'src/wordpress'  # Corrected the path to the Helm chart directory
+      - './wordpress'  # Corrected the path to the Helm chart directory
       # Add any other Helm upgrade/install flags as needed
+    env:
+      - 'GOOGLE_APPLICATION_CREDENTIALS=/home/vishnu2003prasad/Project-1/dev/cred.json'  # Replace with the path to your service account key file
+
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'get'
@@ -27,9 +30,3 @@ steps:
       - '--namespace=wordpress'  # Replace with your target namespace
 
 timeout: '1800s'  # Set a timeout that fits your deployment's duration
-
-options:
-  logging: CLOUD_LOGGING_ONLY  # Use this option to specify Cloud Logging only
-  # or logging: NONE  # Use this option if you don't want any logs
-  serviceAccount: YOUR_SERVICE_ACCOUNT_EMAIL  # Replace with your service account email
-  # Add other build options if needed
