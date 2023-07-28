@@ -31,6 +31,8 @@ steps:
       - '--install'
       - 'YOUR_HELM_RELEASE_NAME'
       - 'wordpress'
+    env:
+      - 'GOOGLE_APPLICATION_CREDENTIALS=/home/vishnu2003prasad/Project-1/dev/cred.json' 
       # Add any other Helm upgrade/install flags as needed
 
   # Verify Deployment
@@ -41,3 +43,6 @@ steps:
       - '--namespace=wordpress'  # Replace with your target namespace
 
 timeout: '1800s'  # Set a timeout that fits your deployment's duration
+options:
+  logging: CLOUD_LOGGING_ONLY  # Use this option to specify Cloud Logging only
+  # or logging: NONE  # Use this option if you don't want any logs
