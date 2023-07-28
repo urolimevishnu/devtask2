@@ -1,35 +1,43 @@
 steps:
-  # Install Helm
-  - name: 'gcr.io/cloud-builders/kubectl'
+  # Connect to Cloud Shell
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
     args:
-      - 'version'
+      - '-c'
+      - |
+        gcloud auth login  # Authenticate with Google Cloud (if not already logged in)
+        gcloud config set project devproje1  # Replace with your Google Cloud project ID
+          # Replace with your desired compute zone
+
+  # Connect to GKE Cluster
   - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: 'bash'
     args:
-      - 'apply'
-      - '-f'
-      - 'https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3'
+      - '-c'
+      - |
+        gcloud container clusters get-credentials dev-task-cluster-dev --region=us-central1-c  # Replace with your GKE cluster details
+
+  # Clone Git Repo
   - name: 'gcr.io/cloud-builders/git'
     args:
       - 'clone'
       - 'https://github.com/urolimevishnu/devtask2.git'
-      - 'src'  # Directory where your Helm chart files are located
+      - 'wordpress'  # Directory where your Helm chart files are located
+
+  # Install Helm Chart
   - name: 'gcr.io/cloud-builders/helm'
     args:
       - 'upgrade'
       - '--install'
-      - 'YOUR_HELM_RELEASE_NAME1'
-      - './wordpress'  # Corrected the path to the Helm chart directory
+      - 'YOUR_HELM_RELEASE_NAME'
+      - 'wordpress'
       # Add any other Helm upgrade/install flags as needed
-    env:
-      - 'GOOGLE_APPLICATION_CREDENTIALS=/home/vishnu2003prasad/Project-1/dev/cred.json'  # Replace with the path to your service account key file
 
+  # Verify Deployment
   - name: 'gcr.io/cloud-builders/kubectl'
     args:
       - 'get'
-      - 'pods'  # Verify the deployment, you can adjust this to any other desired resource type
+      - 'pods'
       - '--namespace=wordpress'  # Replace with your target namespace
 
 timeout: '1800s'  # Set a timeout that fits your deployment's duration
-
-options:
-  logging: CLOUD_LOGGING_ONLY 
