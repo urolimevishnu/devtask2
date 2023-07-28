@@ -1,7 +1,38 @@
 steps:
-- name: 'gcr.io/$PROJECT_ID/helm'
-  args: ['upgrade', '--install', 'wordpress', './wordpress', '--namespace', 'wordpress', '--create-namespace']
-  
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=dev-task-cluster-dev'
+  # Install Helm
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'version'
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get-helm-3'
+  - name: 'gcr.io/cloud-builders/git'
+    args:
+      - 'clone'
+      - 'https://github.com/urolimevishnu/devtask2.git'
+      - 'src'  # Directory where your Helm chart files are located
+  - name: 'gcr.io/cloud-builders/helm'
+    args:
+      - 'upgrade'
+      - '--install'
+      - 'YOUR_HELM_RELEASE_NAME1'
+      - 'src./wordpress'
+      # Add any other Helm upgrade/install flags as needed
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'get'
+      - 'pods'  # Verify the deployment, you can adjust this to any other desired resource type
+      - '--namespace=wordpress'  # Replace with your target namespace
+
+timeout: '1800s'  # Set a timeout that fits your deployment's duration
+
+
+#steps:
+#- name: 'gcr.io/$PROJECT_ID/helm'
+#  args: ['upgrade', '--install', 'wordpress', './wordpress', '--namespace', 'wordpress', '--create-namespace']
+#  
+#  env:
+#  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
+#  - 'CLOUDSDK_CONTAINER_CLUSTER=dev-task-cluster-dev'
